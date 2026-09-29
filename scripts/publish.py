@@ -25,6 +25,8 @@
   · posted/ 에 같은 이름 폴더(result.json)가 있으면 이미 올린 게시물이라 다시 올리지 않고 대기열에서 빼요
     (일부러 다시 올리려면 post.json 에 "repost": true)
   · 예정 시각보다 18시간 넘게 지난 게시물은 철 지난 정보일 수 있어 올리지 않고 자동 보류해요
+  · 올리기 직전에 인스타 최근 게시물을 확인해서, 3일 안에 같은 캡션(첫 줄)으로 올린 글이 있으면
+    새로 올리지 않고 그 게시물을 기록만 해요 (게시 도중 오류·기록 실패로 두 번 올라가는 것 방지)
   · 한 번 실행에 하나만 올려요 (밀린 게 있으면 다음 실행에서 이어서)
 """
 import datetime
@@ -137,6 +139,33 @@ def create_image(ig_id, url, alt=None, carousel_item=False, caption=None):
         raise
 
 
+def already_posted(ig_id, caption, hours=72):
+    """최근 게시물 가운데 캡션 첫 줄이 같은 글이 있으면 그 정보를 돌려줘요 (이중 게시 방지)"""
+    lines = caption.strip().splitlines()
+    first = lines[0].strip() if lines else ""
+    if not first:
+        return None
+    try:
+        res = api("GET", f"{ig_id}/media", {"fields": "id,caption,permalink,timestamp", "limit": "10"})
+    except ApiError as e:
+        log(f"  (최근 게시물 확인은 건너뛰어요: {e})")
+        return None
+    now = datetime.datetime.now(datetime.timezone.utc)
+    for m in res.get("data") or []:
+        cap = (m.get("caption") or "").strip().splitlines()
+        if not cap or cap[0].strip() != first:
+            continue
+        ts = m.get("timestamp", "")
+        try:
+            when = datetime.datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S%z")
+        except ValueError:
+            when = None
+        if when is None or now - when <= datetime.timedelta(hours=hours):
+            return {"media_id": m.get("id", ""), "permalink": m.get("permalink", ""), "timestamp": ts,
+                    "note": "이미 인스타에 올라가 있던 게시물이라 다시 올리지 않고 기록만 했어요"}
+    return None
+
+
 def check_url(url):
     """인스타가 가져갈 이미지 주소가 열리는지 미리 확인해요"""
     req = urllib.request.Request(url, method="HEAD")
@@ -190,9 +219,15 @@ def publish_post(post, ig_id, base):
     urls = [f"{base}/queue/{pid}/{name}" for name in images]
     for u in urls:
         check_url(u)
+    dup = None if post.get("repost") else already_posted(ig_id, caption)
     if MODE == "dry-run":
-        log(f"[시험] {pid}: {len(urls)}장, 캡션 {len(caption)}자 — 이미지 주소 확인 완료, 게시는 하지 않아요")
+        log(f"[시험] {pid}: {len(urls)}장, 캡션 {len(caption)}자 — 이미지 주소 확인 완료, 게시는 하지 않아요"
+            + (f" (같은 캡션 게시물이 이미 있어요: {dup.get('permalink')})" if dup else ""))
         return None
+    if dup:
+        log(f"↩ {pid}: 최근에 같은 캡션으로 올린 게시물이 있어요 — 다시 올리지 않아요 ({dup.get('permalink')})")
+        dup["images"] = len(urls)
+        return dup
     if len(urls) == 1:
         creation = create_image(ig_id, urls[0], alts[0] if alts else None, caption=caption)
         wait_ready(creation, "사진")
@@ -323,8 +358,12 @@ def main():
     if os.path.exists(dest):
         dest = f"{dest}_{now:%H%M%S}"
     shutil.move(post["_folder"], dest)
-    log(f"✅ 게시 완료: {pid} → {result.get('permalink')}")
-    summary(f"### ✅ {pid} 게시 완료\n- {post.get('title', '')}\n- {result.get('permalink', '')}")
+    if result.get("note"):
+        log(f"↩ 기록만 옮겼어요: {pid} → {result.get('permalink')}")
+        summary(f"### ↩ {pid}: {result['note']}\n- {post.get('title', '')}\n- {result.get('permalink', '')}")
+    else:
+        log(f"✅ 게시 완료: {pid} → {result.get('permalink')}")
+        summary(f"### ✅ {pid} 게시 완료\n- {post.get('title', '')}\n- {result.get('permalink', '')}")
     return 1 if failed else 0
 
 
