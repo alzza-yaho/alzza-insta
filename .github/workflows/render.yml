@@ -1,0 +1,49 @@
+name: 인스타 카드 만들기
+
+on:
+  push:
+    branches: [main]
+    paths: ["queue/*/card.txt"]   # Claude가 보낸 링크로 card.txt를 올리면 바로 카드를 만들어요
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: instagram-render
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 그림 도구·글꼴 준비
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          pip install -q pillow numpy scipy playwright
+          python -m playwright install --with-deps chromium
+
+      - name: 카드 그리기
+        run: python3 scripts/render_queue.py
+
+      - name: 만든 카드 저장
+        if: always()
+        run: |
+          git config user.name "alzza-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -e queue ]; then git add -A -- queue; fi
+          if git diff --cached --quiet; then echo "바뀐 것 없음"; exit 0; fi
+          git commit -m "인스타 카드 만들기 $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3; do
+            git pull --rebase --autostash && git push && exit 0
+            sleep 5
+          done
+          exit 1
