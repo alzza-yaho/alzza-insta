@@ -24,14 +24,13 @@ import datetime
 import glob
 import hashlib
 import hmac
+import http.client
 import json
 import os
 import re
 import sys
 import time
-import urllib.error
 import urllib.parse
-import urllib.request
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -56,9 +55,10 @@ DATALAB_ENDPOINTS = [
 
 
 class ApiError(Exception):
-    def __init__(self, where, status, code=None, message=""):
-        self.where, self.status, self.code, self.message = where, status, code, message
-        super().__init__(f"{where} HTTP {status}" + (f" (코드 {code})" if code else "") + (f": {message}" if message else ""))
+    def __init__(self, where, status, code=None, message="", rid=""):
+        self.where, self.status, self.code, self.message, self.rid = where, status, code, message, rid
+        super().__init__(f"{where} HTTP {status}" + (f" (코드 {code})" if code else "") + (f": {message}" if message else "")
+                         + (f" [요청 ID {rid}]" if rid else ""))
 
     def auth(self):
         return self.status in (401, 403)
@@ -95,19 +95,28 @@ def fmt(n):
     return f"{n:,}"
 
 
-def http(method, url, headers=None, body=None, timeout=30):
+def call(method, url, headers=None, body=None, timeout=30):
+    """HTTP 요청 → (상태, 본문, 요청 ID). 헤더 이름을 적은 그대로(X-API-KEY 등 대소문자 유지) 보내요.
+    urllib은 헤더 이름을 'X-api-key'처럼 바꿔 보내서, 이름을 정확히 요구하는 서버에서 인증이 실패할 수 있어요."""
     data = json.dumps(body, ensure_ascii=False).encode("utf-8") if body is not None else None
-    req = urllib.request.Request(url, data=data, method=method)
-    for k, v in (headers or {}).items():
-        req.add_header(k, v)
-    req.add_header("User-Agent", "alzza-keywords/1.0")
+    u = urllib.parse.urlsplit(url)
+    path = (u.path or "/") + (f"?{u.query}" if u.query else "")
+    conn_cls = http.client.HTTPSConnection if u.scheme == "https" else http.client.HTTPConnection
+    hdrs = {"User-Agent": "alzza-keywords/1.1", "Accept": "application/json"}
+    hdrs.update(headers or {})
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            return r.status, r.read().decode("utf-8", "replace")
-    except urllib.error.HTTPError as e:
-        return e.code, e.read().decode("utf-8", "replace")
-    except (urllib.error.URLError, TimeoutError, OSError) as e:
-        return 0, str(e)
+        conn = conn_cls(u.hostname, u.port, timeout=timeout)
+        try:
+            conn.request(method, path, body=data, headers=hdrs)
+            r = conn.getresponse()
+            text = r.read().decode("utf-8", "replace")
+            rid = next((v for k, v in r.getheaders()
+                        if "transaction" in k.lower() or k.lower() in ("x-request-id", "x-ncp-trace-id")), "")
+            return r.status, text, rid
+        finally:
+            conn.close()
+    except (OSError, http.client.HTTPException) as e:
+        return 0, str(e), ""
 
 
 def error_parts(text):
@@ -119,13 +128,16 @@ def error_parts(text):
         return None, text.strip()[:200]
     err = j.get("error") if isinstance(j.get("error"), dict) else {}
     code = j.get("code") or j.get("errorCode") or err.get("errorCode") or err.get("code")
-    msg = (j.get("message") or j.get("errorMessage") or j.get("title") or err.get("message")
-           or err.get("details") or j.get("detail") or "")
+    parts = []  # 서버가 준 설명을 빠짐없이 (title · detail · message …)
+    for v in (j.get("title"), j.get("message"), j.get("errorMessage"), j.get("detail"),
+              err.get("message"), err.get("details")):
+        if v and str(v) not in parts:
+            parts.append(str(v))
     try:
         code = int(code)
     except (TypeError, ValueError):
         pass
-    return code, str(msg)[:200]
+    return code, " — ".join(parts)[:300]
 
 
 # ── 검색광고 API (키워드 도구) ───────────────────────────────────────────────
@@ -149,7 +161,7 @@ class SearchAd:
         wait = 1.0
         for attempt in range(6):
             self.calls += 1
-            status, text = http("GET", f"{SEARCHAD_BASE}{uri}?{query}", self._headers("GET", uri))
+            status, text, rid = call("GET", f"{SEARCHAD_BASE}{uri}?{query}", self._headers("GET", uri))
             if status == 200:
                 try:
                     j = json.loads(text)
@@ -162,8 +174,8 @@ class SearchAd:
                 time.sleep(wait)
                 wait = min(wait * 2, 16)
                 continue
-            raise ApiError("검색광고", status, code, msg)
-        raise ApiError("검색광고", status, code, msg or "여러 번 다시 시도했지만 응답이 없어요")
+            raise ApiError("검색광고", status, code, msg, rid)
+        raise ApiError("검색광고", status, code, msg or "여러 번 다시 시도했지만 응답이 없어요", rid)
 
 
 # ── 데이터랩 검색어 트렌드 ────────────────────────────────────────────────────
@@ -197,8 +209,8 @@ class DataLab:
             wait = 1.0
             for attempt in range(4):
                 self.calls += 1
-                status, text = http("POST", url, {hid: self.id, hsecret: self.secret,
-                                                  "Content-Type": "application/json"}, body)
+                status, text, rid = call("POST", url, {hid: self.id, hsecret: self.secret,
+                                                       "Content-Type": "application/json"}, body)
                 if status == 200:
                     self.used = ep
                     out = {}
@@ -631,8 +643,10 @@ def step_summary(rep):
 
 def auth_hint(e):
     if e.where == "검색광고" and e.auth():
-        return ("검색광고 키가 맞지 않아요. 비밀값 SEARCHAD_CUSTOMER_ID(CUSTOMER_ID 숫자)·SEARCHAD_ACCESS_LICENSE(액세스라이선스)·"
-                "SEARCHAD_SECRET_KEY(비밀키)를 앞뒤 공백 없이 다시 넣어 주세요.")
+        return ("검색광고 키가 맞지 않아요. 네이버 광고 → 도구 → API 사용 관리 화면의 값으로 비밀값을 다시 넣어 주세요: "
+                "SEARCHAD_CUSTOMER_ID = CUSTOMER_ID(숫자), SEARCHAD_ACCESS_LICENSE = 액세스라이선스, "
+                "SEARCHAD_SECRET_KEY = 비밀키('보기'를 누른 뒤 복사). 라이선스와 비밀키가 서로 바뀌지 않았는지, "
+                "라이선스를 다시 발급했다면 예전 값은 못 쓰니 새 값으로 넣었는지 확인해 주세요.")
     return ""
 
 
