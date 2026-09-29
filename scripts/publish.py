@@ -226,7 +226,22 @@ def main():
     if MODE == "check":
         me = whoami()
         log(f"토큰 정상 — @{me.get('username')} ({me.get('account_type')}), user_id {me.get('user_id')}")
-        summary(f"### ✅ 토큰 정상\n- 계정: @{me.get('username')} ({me.get('account_type')})\n- 확인 시각: {now:%Y-%m-%d %H:%M}")
+        ig_id = os.environ.get("IG_USER_ID") or me.get("user_id")
+        try:  # 게시 권한(instagram_business_content_publish)이 있어야 열리는 주소라 권한 확인도 겸해요
+            lim = api("GET", f"{ig_id}/content_publishing_limit", {"fields": "quota_usage,config"})
+        except ApiError as e:
+            log(f"❌ 게시 권한 확인 실패: {e}")
+            summary("### ❌ 토큰은 맞는데 게시 권한이 없어요\n"
+                    f"- 계정: @{me.get('username')} ({me.get('account_type')})\n"
+                    "- Meta 개발자 앱 → 이용 사례(Instagram) → 권한에 `instagram_business_content_publish`가 있는지 확인하고, "
+                    "토큰을 다시 만들어 `IG_ACCESS_TOKEN`을 바꿔 주세요.\n"
+                    f"- 이유: {str(e)[:300]}")
+            return 1
+        d = (lim.get("data") or [{}])[0]
+        used, total = d.get("quota_usage", 0), (d.get("config") or {}).get("quota_total", 100)
+        log(f"게시 권한 정상 — 최근 24시간 게시 {used}/{total}건")
+        summary(f"### ✅ 토큰·게시 권한 정상\n- 계정: @{me.get('username')} ({me.get('account_type')})\n"
+                f"- 최근 24시간 게시 {used}/{total}건\n- 확인 시각: {now:%Y-%m-%d %H:%M}")
         return 0
 
     posts = load_posts()
