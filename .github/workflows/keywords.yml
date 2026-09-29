@@ -1,0 +1,49 @@
+name: 블로그 키워드 분석
+
+on:
+  schedule:
+    - cron: "17 11 * * 2,6"   # 화·토요일 저녁 8시 17분(한국 시간) — 수·일 아침 원고 묶음 전에 순위표를 새로 만들어요
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "check: 키 확인만 / run: 지금 분석해서 순위표 저장"
+        type: choice
+        options: [check, run]
+        default: check
+
+permissions:
+  contents: write
+
+concurrency:
+  group: blog-keywords
+  cancel-in-progress: false
+
+jobs:
+  keywords:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 네이버 검색 데이터로 키워드 분석
+        env:
+          SEARCHAD_CUSTOMER_ID: ${{ secrets.SEARCHAD_CUSTOMER_ID }}
+          SEARCHAD_ACCESS_LICENSE: ${{ secrets.SEARCHAD_ACCESS_LICENSE }}
+          SEARCHAD_SECRET_KEY: ${{ secrets.SEARCHAD_SECRET_KEY }}
+          DATALAB_CLIENT_ID: ${{ secrets.DATALAB_CLIENT_ID }}
+          DATALAB_CLIENT_SECRET: ${{ secrets.DATALAB_CLIENT_SECRET }}
+          MODE: ${{ github.event_name == 'schedule' && 'run' || inputs.mode }}
+        run: python3 scripts/keyword_report.py
+
+      - name: 순위표 저장
+        run: |
+          git config user.name "alzza-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -e trends ]; then git add -A -- trends; fi
+          if git diff --cached --quiet; then echo "바뀐 것 없음"; exit 0; fi
+          git commit -m "블로그 키워드 분석 $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3; do
+            git pull --rebase --autostash && git push && exit 0
+            sleep 5
+          done
+          exit 1
