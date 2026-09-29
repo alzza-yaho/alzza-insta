@@ -1,0 +1,21 @@
+name: 인스타 토큰 연장
+
+on:
+  schedule:
+    - cron: "23 1 * * 1"   # 매주 월요일 10시 23분(한국 시간)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: 장기 토큰 60일 연장
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: python3 scripts/refresh_token.py
