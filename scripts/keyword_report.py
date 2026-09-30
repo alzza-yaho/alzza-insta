@@ -6,7 +6,7 @@
 일·수 아침 Claude 예약 작업이 trends/latest.md를 읽고 글감 순서와 제목에 참고해요.
 
 쓰는 데이터 (둘 다 네이버 공식 API)
-  · 검색광고 키워드 도구(필수): 기본 단어로 연관 키워드와 최근 30일 검색 수(PC+모바일)
+  · 검색광고 키워드 도구(필수): 기본 단어(하나씩 따로 조회)로 연관 키워드와 최근 30일 검색 수(PC+모바일)
   · 데이터랩 검색어 트렌드(선택): 상위 키워드의 최근 4주 일별 흐름(상대값)
 
 직접 돌릴 때
@@ -91,6 +91,21 @@ def num(v):
         return 0
 
 
+def is_tiny(v):
+    """키워드 도구가 숫자 대신 '< 10'을 준 칸이에요."""
+    return isinstance(v, str) and v.strip().startswith("<")
+
+
+def vol_label(x):
+    """표에 적을 검색 수. PC·모바일 둘 다 '< 10'이면 '10 미만'으로 적어요."""
+    return "10 미만" if x.get("tiny") else fmt(x["volume"])
+
+
+def name_label(x):
+    """대표 키워드. 묶는 기준이 된 더 짧은 말이 따로 있으면 함께 적어요 — 예: 부가세계산기 (부가세 묶음)"""
+    return f"{x['keyword']} ({x['root']} 묶음)" if x.get("root") else x["keyword"]
+
+
 def fmt(n):
     return f"{n:,}"
 
@@ -102,7 +117,7 @@ def call(method, url, headers=None, body=None, timeout=30):
     u = urllib.parse.urlsplit(url)
     path = (u.path or "/") + (f"?{u.query}" if u.query else "")
     conn_cls = http.client.HTTPSConnection if u.scheme == "https" else http.client.HTTPConnection
-    hdrs = {"User-Agent": "alzza-keywords/1.1", "Accept": "application/json"}
+    hdrs = {"User-Agent": "alzza-keywords/1.2", "Accept": "application/json"}
     hdrs.update(headers or {})
     try:
         conn = conn_cls(u.hostname, u.port, timeout=timeout)
@@ -277,20 +292,31 @@ def load_config():
     return cfg
 
 
+def _rules(cfg):
+    """분류 규칙을 한 번만 정리해 둬요 (키워드가 수만 개라도 빠르게)."""
+    if "_rules" not in cfg:
+        excl = [(t, norm(t), [norm(x) for x in cfg.get("exclude_unless", {}).get(t, [])])
+                for t in cfg.get("exclude", [])]
+        cats = []
+        for cat, terms in cfg.get("categories", {}).items():
+            for term in terms:
+                if isinstance(term, list):
+                    cats.append((cat, norm(term[0]), [norm(x) for x in term[1:]]))
+                else:
+                    cats.append((cat, norm(term), None))
+        cfg["_rules"] = (excl, cats)
+    return cfg["_rules"]
+
+
 def classify(keyword, cfg):
     n = norm(keyword)
-    for term in cfg.get("exclude", []):
-        if norm(term) in n:
-            rescue = [norm(x) for x in cfg.get("exclude_unless", {}).get(term, [])]
-            if not any(r in n for r in rescue):
-                return None, f"제외어 '{term}'"
-    for cat, terms in cfg.get("categories", {}).items():
-        for term in terms:
-            if isinstance(term, list):
-                if norm(term[0]) in n and any(norm(x) in n for x in term[1:]):
-                    return cat, None
-            elif norm(term) in n:
-                return cat, None
+    excl, cats = _rules(cfg)
+    for term, t, rescue in excl:
+        if t in n and not any(r in n for r in rescue):
+            return None, f"제외어 '{term}'"
+    for cat, t, extra in cats:
+        if t in n and (extra is None or any(x in n for x in extra)):
+            return cat, None
     return None, "주제 밖"
 
 
@@ -316,32 +342,53 @@ def is_variant(head, keyword):
 
 
 def group_families(items, limit):
-    """우선순위대로 들어온 키워드를 '대표 키워드 + 긴 검색어' 묶음으로 모아요 (같은 말이 표를 채우지 않게)."""
+    """검색 수가 많은 순서로 들어온 키워드를 묶음으로 모아요 (같은 말이 표를 채우지 않게).
+    · 묶는 기준(root): 묶음에서 가장 짧은 공통 머리말 — 예: 고향사랑기부
+    · 대표 키워드(head): 묶음에서 검색이 가장 많은 말 — 예: 고향사랑기부제(10만) ← 표의 순위·검색 수는 이 말 기준
+    예전에는 더 짧은 말이 대표가 되면서(고향사랑기부 7천) 많이 찾는 묶음이 아래로 밀렸어요."""
+    def var(h, k):  # 둘 다 정리된 말(띄어쓰기 없음·소문자)
+        return len(h) >= 3 and len(k) > len(h) and k.startswith(h)
+
     fams = []
     for x in items:
-        hits = [f for f in fams if is_variant(f["head"]["keyword"], x["keyword"])
-                or is_variant(x["keyword"], f["head"]["keyword"])]
+        k = x.get("key") or norm(x["keyword"])
+        hits = [f for f in fams if var(f["rkey"], k) or var(k, f["rkey"])]
         if not hits:
             if len(fams) < limit:
-                fams.append({"head": x, "members": []})
+                fams.append({"root": x["keyword"], "rkey": k, "head": x, "members": []})
             continue
         first = hits[0]
-        for f in hits[1:]:
+        for f in hits[1:]:  # 더 짧은 말이 들어와 여러 묶음을 잇는 경우
             first["members"] += [f["head"]] + f["members"]
             fams.remove(f)
-        if is_variant(x["keyword"], first["head"]["keyword"]):
-            first["members"].append(first["head"])
-            first["head"] = x
-        else:
-            first["members"].append(x)
+        first["members"].append(x)
+        if len(k) < len(first["rkey"]):
+            first["root"], first["rkey"] = x["keyword"], k
+        everyone = [first["head"]] + first["members"]
+        best = max(everyone, key=lambda m: m["volume"])  # 같으면 먼저 온 말
+        if best is not first["head"]:
+            first["members"] = [m for m in everyone if m is not best]
+            first["head"] = best
     return fams
+
+
+def family_tails(fam, ranked, min_volume=0):
+    """묶음(root로 시작하는 말) 가운데 대표 키워드와 그 앞부분을 뺀 검색어 — 검색 수 많은 순.
+    rising 묶음은 오른 말만 모여 있어서, 전체 목록(ranked)에서 다시 찾아요."""
+    r, h = norm(fam["root"]), norm(fam["head"]["keyword"])
+    if len(r) < 3:
+        return []
+    return [x for x in ranked if x["key"].startswith(r) and x["key"] != h
+            and not h.startswith(x["key"]) and x["volume"] >= min_volume]
 
 
 # ── 수집 ────────────────────────────────────────────────────────────────────
 
-def collect(sa, hints, pool, problems, src="base"):
-    """기본 단어를 5개씩 조회해서 pool 에 모아요. 인증 오류는 바로 멈추고, 나머지 오류는 기록만 해요."""
-    for group in chunks(hints, 5):
+def collect(sa, hints, pool, problems, src="base", per=1):
+    """기본 단어를 per개씩(기본 1개) 조회해서 pool 에 모아요. 인증 오류는 바로 멈추고, 나머지 오류는 기록만 해요.
+    여러 단어를 한 번에 넣으면 그중 한 단어의 연관 키워드만 잔뜩 오고 나머지는 거의 안 와서(2026-09-30 첫 분석),
+    단어마다 따로 조회해요."""
+    for group in chunks(hints, max(1, min(5, per))):
         try:
             rows = sa.keywords(group)
         except ApiError as e:
@@ -368,14 +415,16 @@ def merge(pool, rows, src="base"):
         kw = str(r.get("relKeyword") or "").strip()
         if not kw:
             continue
-        pc, mo = num(r.get("monthlyPcQcCnt")), num(r.get("monthlyMobileQcCnt"))
+        raw_pc, raw_mo = r.get("monthlyPcQcCnt"), r.get("monthlyMobileQcCnt")
+        pc, mo = num(raw_pc), num(raw_mo)
+        tiny = is_tiny(raw_pc) and is_tiny(raw_mo)
         key = norm(kw)
         cur = pool.get(key)
         if cur is None:
-            pool[key] = {"keyword": kw, "pc": pc, "mobile": mo, "volume": pc + mo,
+            pool[key] = {"keyword": kw, "key": key, "pc": pc, "mobile": mo, "volume": pc + mo, "tiny": tiny,
                          "comp": str(r.get("compIdx") or ""), "src": src}
         elif pc + mo > cur["volume"]:
-            cur.update({"pc": pc, "mobile": mo, "volume": pc + mo})
+            cur.update({"pc": pc, "mobile": mo, "volume": pc + mo, "tiny": tiny})
 
 
 # ── 기록 ────────────────────────────────────────────────────────────────────
@@ -394,8 +443,13 @@ def load_previous(today):
     return None, {}, None
 
 
-def hints_hash(hints):
-    return hashlib.md5(",".join(sorted(norm(h) for h in hints)).encode("utf-8")).hexdigest()[:12]
+def hints_hash(hints, per=1):
+    """기본 단어 목록 + 조회 방식. 둘 중 하나라도 바뀌면 다음 분석에서 '새로 등장'을 한 번 쉬어요
+    (모이는 연관 키워드가 달라져서, 새로 보이는 말이 진짜 새 검색어인지 알 수 없어요)."""
+    base = ",".join(sorted(norm(h) for h in hints))
+    if per != 5:  # 2026-09-30 첫 분석(5개씩)과 같은 방식이면 예전과 같은 값
+        base = f"per{per}|{base}"
+    return hashlib.md5(base.encode("utf-8")).hexdigest()[:12]
 
 
 def prune_history(keep):
@@ -410,8 +464,9 @@ def analyze(cfg, sa, dl, now):
     today = now.date().isoformat()
     hints = unique(cfg.get("seeds", []) + cfg.get("watch", []))
     hint_keys = {norm(h) for h in hints}
+    per = int(cfg.get("hints_per_call", 1) or 1)
     pool, problems = {}, []
-    collect(sa, hints, pool, problems)
+    collect(sa, hints, pool, problems, per=per)
     if not pool:
         raise ApiError("검색광고", 200, None, "연관 키워드를 하나도 받지 못했어요 — " + "; ".join(problems[:3]))
 
@@ -422,23 +477,29 @@ def analyze(cfg, sa, dl, now):
 
     classify_all()
     ranked = sorted((x for x in pool.values() if x["category"]), key=lambda x: -x["volume"])
-    # 많이 찾는 '새 대표 키워드'(기본 단어가 아닌 것)의 긴 검색어를 한 번 더 모아요
-    heads0 = [f["head"]["keyword"] for f in group_families(ranked, cfg.get("expand_top", 10) * 3)]
-    extra = [h for h in heads0 if norm(h) not in hint_keys][:cfg.get("expand_top", 10)]
+    # 많이 찾는 묶음 가운데 기본 단어에 없는 것(예: 부가세)을 한 번 더 조회해서 긴 검색어를 모아요
+    extra = []
+    for f in group_families(ranked, cfg.get("expand_top", 10) * 3):
+        if norm(f["root"]) in hint_keys or norm(f["head"]["keyword"]) in hint_keys:
+            continue
+        extra.append(f["root"])
+    extra = extra[:cfg.get("expand_top", 10)]
     if extra:
-        collect(sa, extra, pool, problems, src="extra")
+        collect(sa, extra, pool, problems, src="extra", per=per)
         classify_all()
         ranked = sorted((x for x in pool.values() if x["category"]), key=lambda x: -x["volume"])
 
     prev_date, prev, prev_hash = load_previous(today)
-    hh = hints_hash(hints)
-    # 기본 단어나 캘린더 글감이 바뀐 직후에는 '새로 등장'이 단어 목록 변화 때문일 수 있어 표시하지 않아요
+    hh = hints_hash(hints, per)
+    # 기본 단어·캘린더 글감·조회 방식이 바뀐 직후에는 '새로 등장'이 그 변화 때문일 수 있어 표시하지 않아요
     new_ok = bool(prev_date) and prev_hash == hh
     for x in pool.values():
-        old = prev.get(norm(x["keyword"]))
-        x["delta"] = round(x["volume"] / old - 1, 3) if old else None
+        old = prev.get(x["key"])
+        # '10 미만'(도구가 수치를 안 준 칸)이 끼면 변화율을 믿을 수 없어서 비워 둬요
+        ok = old and old > 10 and not x["tiny"]
+        x["delta"] = round(x["volume"] / old - 1, 3) if ok else None
         # 추가 조회로만 모인 키워드는 매번 달라질 수 있어 '새로 등장'으로 보지 않아요
-        x["is_new"] = new_ok and old is None and x.get("src") == "base"
+        x["is_new"] = new_ok and old is None and x.get("src") == "base" and not x["tiny"]
 
     top_fams = group_families(ranked, cfg.get("top_n", 30))
     top_fams.sort(key=lambda f: -f["head"]["volume"])
@@ -476,24 +537,35 @@ def analyze(cfg, sa, dl, now):
     rising = sorted(rising, key=lambda x: (-rising_score(x), -x["volume"]))
     rising_fams = group_families(rising, cfg.get("rising_limit", 15))
 
-    # 제목에 쓸 만한 긴 검색어: 대표 키워드로 시작하는 더 긴 키워드 중 검색이 많은 것
-    per = cfg.get("longtail_per_keyword", 3)
-    heads = unique([f["head"]["keyword"] for f in rising_fams[:8]] + [f["head"]["keyword"] for f in top_fams[:12]])
-    longtail = []
-    for h in heads:
-        tails = [x for x in ranked if is_variant(h, x["keyword"])]
+    # 묶음마다 '같은 말로 시작하는 다른 검색어' 수 (표의 '긴 검색어' 칸)
+    for f in rising_fams + top_fams:
+        f["related"] = len(family_tails(f, ranked))
+
+    # 제목에 쓸 만한 긴 검색어: 묶음에서 대표 키워드 다음으로 많이 찾는 말 (너무 적게 찾는 말은 빼요)
+    n_tails = cfg.get("longtail_per_keyword", 3)
+    tail_min = cfg.get("longtail_min_volume", 100)
+    longtail, seen = [], set()
+    for f in rising_fams[:8] + top_fams[:cfg.get("longtail_families", 15)]:
+        h = f["head"]["key"]
+        if h in seen:
+            continue
+        seen.add(h)
+        tails = family_tails(f, ranked, tail_min)[:n_tails]
         if tails:
-            longtail.append({"keyword": h, "tails": [{"keyword": t["keyword"], "volume": t["volume"]}
-                                                     for t in tails[:per]]})
+            item = {"keyword": f["head"]["keyword"],
+                    "tails": [{"keyword": t["keyword"], "volume": t["volume"]} for t in tails]}
+            if norm(f["root"]) != h:
+                item["root"] = f["root"]
+            longtail.append(item)
 
     watch = []
     for w in cfg.get("watch", []):
         x = pool.get(norm(w))
-        watch.append({"keyword": w, "volume": x["volume"] if x else None,
+        watch.append({"keyword": w, "volume": x["volume"] if x else None, "tiny": bool(x and x["tiny"]),
                       "delta": x["delta"] if x else None, "is_new": x["is_new"] if x else False,
                       "trend": x.get("trend") if x else None})
 
-    excluded = sorted((x for x in pool.values() if not x["category"] and norm(x["keyword"]) not in hint_keys),
+    excluded = sorted((x for x in pool.values() if not x["category"] and x["key"] not in hint_keys),
                       key=lambda x: -x["volume"])[:cfg.get("excluded_show", 10)]
 
     history = {x["keyword"]: x["volume"] for x in ranked[:cfg.get("history_size", 2000)] if x["volume"] >= 100}
@@ -509,12 +581,12 @@ def analyze(cfg, sa, dl, now):
         "hints_hash": hh,
         "new_flag": new_ok,
         "watch_file": cfg.get("watch_file"),
-        "counts": {"hints": len(hints), "extra": len(extra), "pool": len(pool), "in_topic": len(ranked),
-                   "searchad_calls": sa.calls, "datalab_calls": dl.calls if dl else 0},
+        "counts": {"hints": len(hints), "extra": len(extra), "hints_per_call": per, "pool": len(pool),
+                   "in_topic": len(ranked), "searchad_calls": sa.calls, "datalab_calls": dl.calls if dl else 0},
         "datalab": datalab,
         "problems": problems,
-        "rising": [slim(f["head"], f["members"]) for f in rising_fams],
-        "top": [slim(f["head"], f["members"]) for f in top_fams],
+        "rising": [slim(f) for f in rising_fams],
+        "top": [slim(f) for f in top_fams],
         "watch": watch,
         "longtail": longtail,
         "excluded": [{"keyword": x["keyword"], "volume": x["volume"], "reason": x["reason"]} for x in excluded],
@@ -522,10 +594,15 @@ def analyze(cfg, sa, dl, now):
     }
 
 
-def slim(x, members=()):
+def slim(fam):
+    x = fam["head"]
     out = {"keyword": x["keyword"], "category": x["category"], "volume": x["volume"],
            "pc": x["pc"], "mobile": x["mobile"], "delta": x["delta"], "is_new": x["is_new"],
-           "related": len(members)}
+           "related": fam.get("related", 0)}
+    if x.get("tiny"):
+        out["tiny"] = True
+    if norm(fam["root"]) != x["key"]:
+        out["root"] = fam["root"]  # 묶는 기준이 된 더 짧은 말 (예: 고향사랑기부)
     if x.get("trend"):
         out["trend"] = x["trend"]
     return out
@@ -559,10 +636,11 @@ def render_md(rep):
         gap = (datetime.date.fromisoformat(rep["date"]) - datetime.date.fromisoformat(rep["previous_date"])).days
         lines.append(f"- 비교 기준: {rep['previous_date']} 분석({gap}일 전) — '지난번 대비'는 최근 30일 검색 수의 변화예요")
         if not rep.get("new_flag"):
-            lines.append("- 기본 단어·캘린더 글감이 바뀐 뒤 첫 분석이라 이번에는 '새로 등장'을 표시하지 않아요")
+            lines.append("- 기본 단어·캘린더 글감·조회 방식이 바뀐 뒤 첫 분석이라 이번에는 '새로 등장'을 표시하지 않아요")
     else:
         lines.append("- 첫 분석이라 '지난번 대비'는 다음 분석부터 나와요")
-    lines.append(f"- 조회: 기본 단어 {c['hints']}개 + 추가 {c['extra']}개 → 연관 키워드 {fmt(c['pool'])}개 중 블로그 주제에 맞는 {fmt(c['in_topic'])}개")
+    how = "단어마다 따로 조회" if c.get("hints_per_call", 5) == 1 else f"{c.get('hints_per_call', 5)}개씩 조회"
+    lines.append(f"- 조회: 기본 단어 {c['hints']}개 + 추가 {c['extra']}개({how}) → 연관 키워드 {fmt(c['pool'])}개 중 블로그 주제에 맞는 {fmt(c['in_topic'])}개")
     if dl["used"] and not dl["error"]:
         lines.append(f"- 데이터랩: 연결됨({dl['used']}) · {dl['start']}~{dl['end']} · '최근 1주'는 그 전 3주 평균 대비 배수")
     elif dl["error"]:
@@ -571,20 +649,20 @@ def render_md(rep):
         lines.append("- 데이터랩: 키 없음(선택 기능) — '최근 1주' 칸은 비어 있어요")
     if rep["problems"]:
         lines.append(f"- 조회하지 못한 단어: {'; '.join(rep['problems'][:5])}")
-    lines += ["- '긴 검색어'는 대표 키워드로 시작하는 더 긴 검색어 수예요(예: 근로장려금 → 근로장려금지급일). 4장에 많이 찾는 것을 적었어요",
+    lines += ["- 같은 말로 시작하는 검색어는 한 줄로 묶어요. '키워드'는 묶음에서 가장 많이 찾는 말이에요(더 짧은 기준 말이 따로 있으면 '(부가세 묶음)'처럼 적어요). '긴 검색어'는 묶음의 다른 검색어 수이고(예: 근로장려금 → 근로장려금지급일), 4장에 많이 찾는 것을 적었어요",
               "", "## 1. 뜨는 키워드", ""]
     if rep["rising"]:
         lines += ["| 키워드 | 분류 | 월 검색수 | 지난번 대비 | 최근 1주 | 4주 흐름 | 긴 검색어 |", "|---|---|---:|---:|---|---|---:|"]
         for x in rep["rising"]:
             t, s = trend_cells(x)
-            lines.append(f"| {x['keyword']} | {x['category']} | {fmt(x['volume'])} | {delta_label(x)} | {t} | {s} | {x.get('related', 0)} |")
+            lines.append(f"| {name_label(x)} | {x['category']} | {vol_label(x)} | {delta_label(x)} | {t} | {s} | {x.get('related', 0)} |")
     else:
         lines.append("아직 없어요. (첫 분석이거나 크게 오른 키워드가 없어요)")
     lines += ["", f"## 2. 많이 찾는 키워드 TOP {len(rep['top'])}", "",
               "| 순위 | 키워드 | 분류 | 월 검색수 | 지난번 대비 | 최근 1주 | 긴 검색어 |", "|---:|---|---|---:|---:|---|---:|"]
     for i, x in enumerate(rep["top"], 1):
         t, _ = trend_cells(x)
-        lines.append(f"| {i} | {x['keyword']} | {x['category']} | {fmt(x['volume'])} | {delta_label(x)} | {t} | {x.get('related', 0)} |")
+        lines.append(f"| {i} | {name_label(x)} | {x['category']} | {vol_label(x)} | {delta_label(x)} | {t} | {x.get('related', 0)} |")
     if rep["watch"]:
         lines += ["", f"## 3. 캘린더 글감 확인 ({rep['watch_file']})", "",
                   "| 키워드 | 월 검색수 | 지난번 대비 | 최근 1주 | 4주 흐름 |", "|---|---:|---:|---|---|"]
@@ -593,13 +671,16 @@ def render_md(rep):
                 lines.append(f"| {w['keyword']} | 데이터 없음 | – | – | – |")
                 continue
             t, s = trend_cells(w)
-            lines.append(f"| {w['keyword']} | {fmt(w['volume'])} | {delta_label(w)} | {t} | {s} |")
+            lines.append(f"| {w['keyword']} | {vol_label(w)} | {delta_label(w)} | {t} | {s} |")
+        if any(w.get("tiny") or w["volume"] is None for w in rep["watch"]):
+            lines += ["", "'10 미만'·'데이터 없음'은 키워드 도구가 그 말의 검색 수를 주지 않은 칸이에요. "
+                          "실제로는 많이 찾는 말도 이렇게 나올 때가 있어서, 이 칸만 보고 글감을 미루거나 빼지 않아요."]
     if rep["longtail"]:
         lines += ["", "## 4. 제목에 쓸 만한 긴 검색어", "",
                   "키워드 도구는 띄어쓰기 없이 보여 줘요. 제목·태그에는 자연스럽게 띄어 쓰고, 같은 말을 반복하지 않아요.", ""]
         for lt in rep["longtail"]:
             tails = " · ".join(f"{t['keyword']}({fmt(t['volume'])})" for t in lt["tails"])
-            lines.append(f"- **{lt['keyword']}** → {tails}")
+            lines.append(f"- **{name_label(lt)}** → {tails}")
     if rep["excluded"]:
         lines += ["", "## 5. 주제 밖이라 뺀 인기 키워드", "",
                   " · ".join(f"{x['keyword']}({fmt(x['volume'])}, {x['reason']})" for x in rep["excluded"])]
