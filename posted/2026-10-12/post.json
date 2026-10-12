@@ -2,16 +2,7 @@
  "id": "2026-10-12",
  "publish_at": "2026-10-12T12:00:00+09:00",
  "title": "부가세 예정고지 납부기한 11월 2일 (인스타 카드뉴스)",
- "images": [
-  "01.jpg",
-  "02.jpg",
-  "03.jpg",
-  "04.jpg",
-  "05.jpg",
-  "06.jpg",
-  "07.jpg",
-  "08.jpg"
- ],
+ "images": 8,
  "alt": [
   "부가세 예정고지 표지. 납부기한이 11월 2일 월요일까지로 늦춰졌어요. 법인 예정신고·납부는 10월 26일. 확성기를 든 다람쥐 캐릭터.",
   "한눈에 보기. 예정고지 납부 11월 2일까지, 법인 예정신고 10월 26일까지, 고지 금액은 1~6월 납부세액의 50%, 홈택스·손택스·ARS 1544-9944로 확인, 기한을 넘기면 가산세 3%.",
@@ -27,5 +18,10 @@
  "made_at": "2026-10-11T10:09:48+09:00",
  "attempts": 1,
  "last_error": "HTTP 403 code=4 sub=2207051: We restrict certain activity to protect our community. Tell us if you think we made a mistake.",
- "last_try": "2026-10-12T12:22:11+09:00"
+ "last_try": "2026-10-12T12:22:11+09:00",
+ "posted_at": "2026-10-12T13:22:18+09:00",
+ "media_id": "18100935101456548",
+ "permalink": "https://www.instagram.com/p/DeYQhiiDRih/",
+ "timestamp": "2026-10-12T03:22:44+0000",
+ "note": "이미 인스타에 올라가 있던 게시물이라 다시 올리지 않고 기록만 했어요"
 }
