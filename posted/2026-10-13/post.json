@@ -2,16 +2,7 @@
  "id": "2026-10-13",
  "publish_at": "2026-10-13T12:00:00+09:00",
  "title": "문화누리카드 발급 11월 30일·사용 12월 31일까지 (인스타 카드뉴스)",
- "images": [
-  "01.jpg",
-  "02.jpg",
-  "03.jpg",
-  "04.jpg",
-  "05.jpg",
-  "06.jpg",
-  "07.jpg",
-  "08.jpg"
- ],
+ "images": 8,
  "alt": [
   "문화누리카드 표지. 15만원 소멸 전에 써요, 발급은 11월 30일까지. 놀란 표정의 다람쥐 캐릭터.",
   "한눈에 보기. 6세 이상 기초생활수급자·차상위계층, 1인당 연 15만원, 발급 11월 30일까지, 사용 12월 31일까지, 가맹점 3만 5천여 곳.",
@@ -27,5 +18,10 @@
  "made_at": "2026-10-11T10:12:03+09:00",
  "attempts": 1,
  "last_error": "HTTP 403 code=4 sub=2207051: We restrict certain activity to protect our community. Tell us if you think we made a mistake.",
- "last_try": "2026-10-13T12:21:04+09:00"
+ "last_try": "2026-10-13T12:21:04+09:00",
+ "posted_at": "2026-10-13T13:22:29+09:00",
+ "media_id": "18098848688092702",
+ "permalink": "https://www.instagram.com/p/Dea1MkuG97B/",
+ "timestamp": "2026-10-13T03:21:39+0000",
+ "note": "이미 인스타에 올라가 있던 게시물이라 다시 올리지 않고 기록만 했어요"
 }
