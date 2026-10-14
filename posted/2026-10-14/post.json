@@ -2,17 +2,7 @@
  "id": "2026-10-14",
  "publish_at": "2026-10-14T12:00:00+09:00",
  "title": "청약 가점 계산법 84점 만점 (인스타 카드뉴스)",
- "images": [
-  "01.jpg",
-  "02.jpg",
-  "03.jpg",
-  "04.jpg",
-  "05.jpg",
-  "06.jpg",
-  "07.jpg",
-  "08.jpg",
-  "09.jpg"
- ],
+ "images": 9,
  "alt": [
   "청약 가점 표지. 내 점수는 몇 점일까, 84점 만점. 손을 흔드는 다람쥐 캐릭터.",
   "한눈에 보기. 만점 84점, 무주택기간 최대 32점, 부양가족 최대 35점, 청약통장 가입기간 최대 17점, 배우자 통장 최대 3점.",
@@ -29,5 +19,10 @@
  "made_at": "2026-10-11T10:12:06+09:00",
  "attempts": 1,
  "last_error": "HTTP 403 code=4 sub=2207051: We restrict certain activity to protect our community. Tell us if you think we made a mistake.",
- "last_try": "2026-10-14T12:30:07+09:00"
+ "last_try": "2026-10-14T12:30:07+09:00",
+ "posted_at": "2026-10-14T13:32:51+09:00",
+ "media_id": "18111216359613314",
+ "permalink": "https://www.instagram.com/p/DedbCIAGyu_/",
+ "timestamp": "2026-10-14T03:30:49+0000",
+ "note": "이미 인스타에 올라가 있던 게시물이라 다시 올리지 않고 기록만 했어요"
 }
