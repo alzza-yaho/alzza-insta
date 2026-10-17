@@ -26,5 +26,8 @@
  ],
  "caption_file": "caption.txt",
  "hold": false,
- "made_at": "2026-10-14T10:07:03+09:00"
+ "made_at": "2026-10-14T10:07:03+09:00",
+ "attempts": 1,
+ "last_error": "HTTP 400 code=9007 sub=2207027: The media is not ready for publishing, please wait for a moment",
+ "last_try": "2026-10-17T12:27:31+09:00"
 }
