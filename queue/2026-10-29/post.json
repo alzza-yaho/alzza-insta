@@ -26,5 +26,8 @@
  ],
  "caption_file": "caption.txt",
  "hold": false,
- "made_at": "2026-10-28T10:40:55+09:00"
+ "made_at": "2026-10-28T10:40:55+09:00",
+ "attempts": 1,
+ "last_error": "HTTP 403 code=4 sub=2207051: We restrict certain activity to protect our community. Tell us if you think we made a mistake.",
+ "last_try": "2026-10-29T12:45:09+09:00"
 }
