@@ -1,8 +1,8 @@
 {
  "version": 1,
- "generated_at": "2026-11-15T02:04+09:00",
- "date": "2026-11-15",
- "previous_date": "2026-11-11",
+ "generated_at": "2026-11-18T04:50+09:00",
+ "date": "2026-11-18",
+ "previous_date": "2026-11-15",
  "hints_hash": "011aa3e27a5a",
  "new_flag": true,
  "watch_file": "watch-2026Q4.txt",
@@ -24,226 +24,125 @@
  "problems": [],
  "rising": [
   {
-   "keyword": "연말정산미리보기",
-   "category": "세금·환급",
-   "volume": 59000,
-   "pc": 31200,
-   "mobile": 27800,
-   "delta": 0.288,
-   "is_new": false,
-   "related": 94,
-   "root": "연말정산"
-  },
-  {
-   "keyword": "고양장항신혼희망타운",
-   "category": "청약·주거",
-   "volume": 770,
-   "pc": 250,
-   "mobile": 520,
-   "delta": 0.51,
-   "is_new": false,
-   "related": 0
-  },
-  {
    "keyword": "노인일자리신청",
    "category": "지원금·복지",
-   "volume": 2740,
-   "pc": 410,
-   "mobile": 2330,
-   "delta": 0.435,
-   "is_new": false,
-   "related": 0
-  },
-  {
-   "keyword": "종부세",
-   "category": "세금·환급",
-   "volume": 14640,
-   "pc": 3440,
-   "mobile": 11200,
-   "delta": 0.43,
-   "is_new": false,
-   "related": 5
-  },
-  {
-   "keyword": "개인사업자정부지원금",
-   "category": "지원금·복지",
-   "volume": 1000,
-   "pc": 280,
-   "mobile": 720,
-   "delta": 0.408,
-   "is_new": false,
-   "related": 0
-  },
-  {
-   "keyword": "근로장려금",
-   "category": "세금·환급",
-   "volume": 82200,
-   "pc": 15300,
-   "mobile": 66900,
-   "delta": 0.207,
-   "is_new": false,
-   "related": 22
-  },
-  {
-   "keyword": "종합소득세추계신고",
-   "category": "세금·환급",
-   "volume": 610,
+   "volume": 3360,
    "pc": 480,
-   "mobile": 130,
-   "delta": 0.326,
-   "is_new": false,
-   "related": 0
-  },
-  {
-   "keyword": "고용보험실업급여계산기",
-   "category": "지원금·복지",
-   "volume": 620,
-   "pc": 190,
-   "mobile": 430,
-   "delta": 0.319,
+   "mobile": 2880,
+   "delta": 0.226,
    "is_new": false,
    "related": 0
   },
   {
    "keyword": "원천징수",
    "category": "세금·환급",
-   "volume": 12220,
-   "pc": 3850,
-   "mobile": 8370,
-   "delta": 0.314,
+   "volume": 14370,
+   "pc": 4170,
+   "mobile": 10200,
+   "delta": 0.176,
    "is_new": false,
    "related": 7
   },
   {
-   "keyword": "종소세중간예납",
+   "keyword": "연말정산미리보기",
    "category": "세금·환급",
-   "volume": 5130,
-   "pc": 1580,
-   "mobile": 3550,
-   "delta": 0.302,
+   "volume": 69300,
+   "pc": 36500,
+   "mobile": 32800,
+   "delta": 0.175,
    "is_new": false,
    "related": 0
   },
   {
-   "keyword": "종합소득세중간예납",
-   "category": "세금·환급",
-   "volume": 19280,
-   "pc": 8180,
-   "mobile": 11100,
-   "delta": 0.292,
-   "is_new": false,
-   "related": 0
-  },
-  {
-   "keyword": "K패스환급금",
-   "category": "생활요금",
-   "volume": 2010,
-   "pc": 490,
-   "mobile": 1520,
-   "delta": 0.28,
-   "is_new": false,
-   "related": 0
-  },
-  {
-   "keyword": "에너지바우처대상",
+   "keyword": "KB국민행복카드",
    "category": "지원금·복지",
-   "volume": 8160,
-   "pc": 1590,
-   "mobile": 6570,
-   "delta": 0.242,
+   "volume": 690,
+   "pc": 140,
+   "mobile": 550,
+   "delta": 0.169,
    "is_new": false,
    "related": 0
   },
   {
-   "keyword": "종합소득세카드납부",
+   "keyword": "고향사랑기부",
    "category": "세금·환급",
-   "volume": 770,
-   "pc": 270,
-   "mobile": 500,
-   "delta": 0.203,
+   "volume": 17560,
+   "pc": 7560,
+   "mobile": 10000,
+   "delta": 0.156,
    "is_new": false,
-   "related": 0
-  },
-  {
-   "keyword": "퇴직자연말정산",
-   "category": "세금·환급",
-   "volume": 500,
-   "pc": 150,
-   "mobile": 350,
-   "delta": 0.19,
-   "is_new": false,
-   "related": 0
+   "related": 1
   }
  ],
  "top": [
   {
    "keyword": "청년미래적금",
    "category": "청년·금융",
-   "volume": 385000,
-   "pc": 73300,
-   "mobile": 311700,
-   "delta": -0.326,
+   "volume": 308500,
+   "pc": 59700,
+   "mobile": 248800,
+   "delta": -0.199,
    "is_new": false,
    "related": 0
   },
   {
    "keyword": "국민연금",
    "category": "지원금·복지",
-   "volume": 319600,
-   "pc": 129600,
-   "mobile": 190000,
-   "delta": 0.007,
+   "volume": 295900,
+   "pc": 123000,
+   "mobile": 172900,
+   "delta": -0.074,
    "is_new": false,
    "related": 2
   },
   {
    "keyword": "K패스",
    "category": "생활요금",
-   "volume": 218500,
-   "pc": 34000,
-   "mobile": 184500,
-   "delta": -0.053,
+   "volume": 210800,
+   "pc": 33000,
+   "mobile": 177800,
+   "delta": -0.035,
    "is_new": false,
    "related": 43
   },
   {
-   "keyword": "모두의카드",
-   "category": "생활요금",
-   "volume": 196100,
-   "pc": 38000,
-   "mobile": 158100,
-   "delta": -0.015,
-   "is_new": false,
-   "related": 0
-  },
-  {
    "keyword": "고향사랑기부제",
    "category": "세금·환급",
-   "volume": 176200,
-   "pc": 62700,
-   "mobile": 113500,
-   "delta": 0.127,
+   "volume": 198400,
+   "pc": 70400,
+   "mobile": 128000,
+   "delta": 0.126,
    "is_new": false,
    "related": 0,
    "root": "고향사랑기부"
   },
   {
+   "keyword": "모두의카드",
+   "category": "생활요금",
+   "volume": 190100,
+   "pc": 37000,
+   "mobile": 153100,
+   "delta": -0.031,
+   "is_new": false,
+   "related": 0
+  },
+  {
    "keyword": "문화누리카드",
    "category": "지원금·복지",
-   "volume": 127100,
-   "pc": 27300,
-   "mobile": 99800,
-   "delta": 0.052,
+   "volume": 131200,
+   "pc": 28000,
+   "mobile": 103200,
+   "delta": 0.032,
    "is_new": false,
    "related": 19
   },
   {
    "keyword": "실업급여조건",
    "category": "지원금·복지",
-   "volume": 120700,
-   "pc": 24900,
-   "mobile": 95800,
-   "delta": 0.019,
+   "volume": 119700,
+   "pc": 24500,
+   "mobile": 95200,
+   "delta": -0.008,
    "is_new": false,
    "related": 51,
    "root": "실업급여"
@@ -251,20 +150,20 @@
   {
    "keyword": "신생아특례대출",
    "category": "청약·주거",
-   "volume": 106000,
-   "pc": 24100,
-   "mobile": 81900,
-   "delta": -0.032,
+   "volume": 104200,
+   "pc": 23500,
+   "mobile": 80700,
+   "delta": -0.017,
    "is_new": false,
    "related": 0
   },
   {
    "keyword": "부가세계산기",
    "category": "세금·환급",
-   "volume": 92500,
-   "pc": 65100,
-   "mobile": 27400,
-   "delta": 0.022,
+   "volume": 89800,
+   "pc": 63200,
+   "mobile": 26600,
+   "delta": -0.029,
    "is_new": false,
    "related": 75,
    "root": "부가세"
@@ -272,60 +171,71 @@
   {
    "keyword": "청년문화예술패스",
    "category": "청년·금융",
-   "volume": 89380,
-   "pc": 8480,
-   "mobile": 80900,
-   "delta": 0.065,
+   "volume": 89190,
+   "pc": 8590,
+   "mobile": 80600,
+   "delta": -0.002,
    "is_new": false,
    "related": 0
   },
   {
    "keyword": "근로장려금",
    "category": "세금·환급",
-   "volume": 82200,
-   "pc": 15300,
-   "mobile": 66900,
-   "delta": 0.207,
+   "volume": 86700,
+   "pc": 15600,
+   "mobile": 71100,
+   "delta": 0.055,
    "is_new": false,
    "related": 22
   },
   {
    "keyword": "고용보험",
    "category": "지원금·복지",
-   "volume": 79900,
-   "pc": 41000,
-   "mobile": 38900,
-   "delta": 0.015,
+   "volume": 80500,
+   "pc": 41700,
+   "mobile": 38800,
+   "delta": 0.008,
    "is_new": false,
    "related": 16
   },
   {
    "keyword": "에너지바우처",
    "category": "지원금·복지",
-   "volume": 77200,
-   "pc": 15800,
-   "mobile": 61400,
-   "delta": 0.055,
+   "volume": 76100,
+   "pc": 15700,
+   "mobile": 60400,
+   "delta": -0.014,
    "is_new": false,
    "related": 4
   },
   {
    "keyword": "LH임대주택",
    "category": "청약·주거",
-   "volume": 70100,
-   "pc": 22900,
-   "mobile": 47200,
-   "delta": -0.025,
+   "volume": 73800,
+   "pc": 25100,
+   "mobile": 48700,
+   "delta": 0.053,
    "is_new": false,
    "related": 2
   },
   {
+   "keyword": "연말정산미리보기",
+   "category": "세금·환급",
+   "volume": 69300,
+   "pc": 36500,
+   "mobile": 32800,
+   "delta": 0.175,
+   "is_new": false,
+   "related": 94,
+   "root": "연말정산"
+  },
+  {
    "keyword": "주휴수당계산기",
    "category": "지원금·복지",
-   "volume": 67900,
-   "pc": 12900,
-   "mobile": 55000,
-   "delta": 0.009,
+   "volume": 67700,
+   "pc": 13000,
+   "mobile": 54700,
+   "delta": -0.003,
    "is_new": false,
    "related": 3,
    "root": "주휴수당"
@@ -333,112 +243,101 @@
   {
    "keyword": "보금자리론",
    "category": "청약·주거",
-   "volume": 66800,
-   "pc": 29300,
-   "mobile": 37500,
-   "delta": -0.054,
+   "volume": 64700,
+   "pc": 28500,
+   "mobile": 36200,
+   "delta": -0.031,
    "is_new": false,
    "related": 1
   },
   {
    "keyword": "디딤돌대출",
    "category": "청약·주거",
-   "volume": 62900,
-   "pc": 20700,
-   "mobile": 42200,
-   "delta": -0.028,
+   "volume": 61600,
+   "pc": 20200,
+   "mobile": 41400,
+   "delta": -0.021,
    "is_new": false,
    "related": 2
   },
   {
-   "keyword": "연말정산미리보기",
-   "category": "세금·환급",
-   "volume": 59000,
-   "pc": 31200,
-   "mobile": 27800,
-   "delta": 0.288,
-   "is_new": false,
-   "related": 94,
-   "root": "연말정산"
-  },
-  {
    "keyword": "행복주택",
    "category": "청약·주거",
-   "volume": 57700,
-   "pc": 18500,
-   "mobile": 39200,
-   "delta": 0.036,
+   "volume": 59700,
+   "pc": 19000,
+   "mobile": 40700,
+   "delta": 0.035,
    "is_new": false,
    "related": 3
   },
   {
    "keyword": "최저임금",
    "category": "달라지는 제도",
-   "volume": 56300,
-   "pc": 26300,
-   "mobile": 30000,
-   "delta": 0.016,
+   "volume": 56500,
+   "pc": 26700,
+   "mobile": 29800,
+   "delta": 0.004,
    "is_new": false,
    "related": 3
   },
   {
    "keyword": "국가장학금",
    "category": "지원금·복지",
-   "volume": 54500,
-   "pc": 13100,
-   "mobile": 41400,
-   "delta": 0.05,
-   "is_new": false,
-   "related": 0
-  },
-  {
-   "keyword": "청년도약계좌",
-   "category": "청년·금융",
-   "volume": 49580,
-   "pc": 9680,
-   "mobile": 39900,
-   "delta": -0.165,
+   "volume": 56200,
+   "pc": 13000,
+   "mobile": 43200,
+   "delta": 0.031,
    "is_new": false,
    "related": 0
   },
   {
    "keyword": "국민행복카드",
    "category": "지원금·복지",
-   "volume": 48900,
+   "volume": 49100,
    "pc": 11600,
-   "mobile": 37300,
-   "delta": -0.006,
+   "mobile": 37500,
+   "delta": 0.004,
    "is_new": false,
    "related": 57
   },
   {
    "keyword": "전세대출",
    "category": "청약·주거",
-   "volume": 47100,
-   "pc": 14600,
-   "mobile": 32500,
-   "delta": -0.023,
+   "volume": 46900,
+   "pc": 14500,
+   "mobile": 32400,
+   "delta": -0.004,
    "is_new": false,
    "related": 16
   },
   {
    "keyword": "청년월세지원",
    "category": "청년·금융",
-   "volume": 45380,
-   "pc": 8680,
-   "mobile": 36700,
-   "delta": -0.003,
+   "volume": 46650,
+   "pc": 8850,
+   "mobile": 37800,
+   "delta": 0.028,
    "is_new": false,
    "related": 2,
    "root": "청년월세"
   },
   {
+   "keyword": "청년도약계좌",
+   "category": "청년·금융",
+   "volume": 45160,
+   "pc": 8660,
+   "mobile": 36500,
+   "delta": -0.089,
+   "is_new": false,
+   "related": 0
+  },
+  {
    "keyword": "케이패스",
    "category": "생활요금",
-   "volume": 44810,
-   "pc": 6710,
-   "mobile": 38100,
-   "delta": -0.061,
+   "volume": 43760,
+   "pc": 6560,
+   "mobile": 37200,
+   "delta": -0.023,
    "is_new": false,
    "related": 19
   },
@@ -446,40 +345,40 @@
    "keyword": "청약",
    "category": "청약·주거",
    "volume": 43700,
-   "pc": 19800,
-   "mobile": 23900,
-   "delta": 0.026,
+   "pc": 19700,
+   "mobile": 24000,
+   "delta": 0.0,
    "is_new": false,
    "related": 0
   },
   {
    "keyword": "청년일자리도약장려금",
    "category": "청년·금융",
-   "volume": 39500,
-   "pc": 17000,
+   "volume": 39000,
+   "pc": 16500,
    "mobile": 22500,
-   "delta": 0.0,
+   "delta": -0.013,
    "is_new": false,
    "related": 1,
    "root": "청년일자리"
   },
   {
-   "keyword": "청년전세대출",
-   "category": "청년·금융",
-   "volume": 38250,
-   "pc": 9750,
-   "mobile": 28500,
-   "delta": -0.034,
+   "keyword": "국민내일배움카드",
+   "category": "지원금·복지",
+   "volume": 38600,
+   "pc": 11800,
+   "mobile": 26800,
+   "delta": 0.016,
    "is_new": false,
    "related": 0
   },
   {
-   "keyword": "국민내일배움카드",
-   "category": "지원금·복지",
-   "volume": 38000,
-   "pc": 11600,
-   "mobile": 26400,
-   "delta": 0.008,
+   "keyword": "청년전세대출",
+   "category": "청년·금융",
+   "volume": 38070,
+   "pc": 9570,
+   "mobile": 28500,
+   "delta": -0.005,
    "is_new": false,
    "related": 0
   }
@@ -487,41 +386,41 @@
  "watch": [
   {
    "keyword": "모두의카드",
-   "volume": 196100,
+   "volume": 190100,
    "tiny": false,
-   "delta": -0.015,
+   "delta": -0.031,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "청년전세대출",
-   "volume": 38250,
+   "volume": 38070,
    "tiny": false,
-   "delta": -0.034,
+   "delta": -0.005,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "보금자리론",
-   "volume": 66800,
+   "volume": 64700,
    "tiny": false,
-   "delta": -0.054,
+   "delta": -0.031,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "에너지바우처",
-   "volume": 77200,
+   "volume": 76100,
    "tiny": false,
-   "delta": 0.055,
+   "delta": -0.014,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "기준중위소득",
-   "volume": 2430,
+   "volume": 2390,
    "tiny": false,
-   "delta": -0.028,
+   "delta": -0.016,
    "is_new": false,
    "trend": null
   },
@@ -535,17 +434,17 @@
   },
   {
    "keyword": "청약통장전환",
-   "volume": 610,
+   "volume": 450,
    "tiny": false,
-   "delta": -0.384,
+   "delta": -0.262,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "3기신도시",
-   "volume": 16250,
+   "volume": 16500,
    "tiny": false,
-   "delta": -0.004,
+   "delta": 0.015,
    "is_new": false,
    "trend": null
   },
@@ -567,81 +466,81 @@
   },
   {
    "keyword": "아동수당",
-   "volume": 23600,
+   "volume": 23150,
    "tiny": false,
-   "delta": -0.004,
+   "delta": -0.019,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "첫만남이용권",
-   "volume": 27290,
+   "volume": 26960,
    "tiny": false,
-   "delta": -0.018,
+   "delta": -0.012,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "근로장려금",
-   "volume": 82200,
+   "volume": 86700,
    "tiny": false,
-   "delta": 0.207,
+   "delta": 0.055,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "청년문화예술패스",
-   "volume": 89380,
+   "volume": 89190,
    "tiny": false,
-   "delta": 0.065,
+   "delta": -0.002,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "고향사랑기부제",
-   "volume": 176200,
+   "volume": 198400,
    "tiny": false,
-   "delta": 0.127,
+   "delta": 0.126,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "문화누리카드",
-   "volume": 127100,
+   "volume": 131200,
    "tiny": false,
-   "delta": 0.052,
+   "delta": 0.032,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "디딤돌대출",
-   "volume": 62900,
+   "volume": 61600,
    "tiny": false,
-   "delta": -0.028,
+   "delta": -0.021,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "버팀목대출",
-   "volume": 5250,
+   "volume": 5170,
    "tiny": false,
-   "delta": -0.011,
+   "delta": -0.015,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "신생아특례대출",
-   "volume": 106000,
+   "volume": 104200,
    "tiny": false,
-   "delta": -0.032,
+   "delta": -0.017,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "청년월세지원",
-   "volume": 45380,
+   "volume": 46650,
    "tiny": false,
-   "delta": -0.003,
+   "delta": 0.028,
    "is_new": false,
    "trend": null
   },
@@ -655,57 +554,57 @@
   },
   {
    "keyword": "연말정산미리보기",
-   "volume": 59000,
+   "volume": 69300,
    "tiny": false,
-   "delta": 0.288,
+   "delta": 0.175,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "최저임금",
-   "volume": 56300,
+   "volume": 56500,
    "tiny": false,
-   "delta": 0.016,
+   "delta": 0.004,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "전세사기",
-   "volume": 7770,
+   "volume": 7530,
    "tiny": false,
-   "delta": -0.005,
+   "delta": -0.031,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "국가장학금",
-   "volume": 54500,
+   "volume": 56200,
    "tiny": false,
-   "delta": 0.05,
+   "delta": 0.031,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "노인일자리",
-   "volume": 20140,
+   "volume": 20480,
    "tiny": false,
-   "delta": 0.046,
+   "delta": 0.017,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "종합부동산세",
-   "volume": 6500,
+   "volume": 6790,
    "tiny": false,
-   "delta": 0.178,
+   "delta": 0.045,
    "is_new": false,
    "trend": null
   },
   {
    "keyword": "청년매입임대",
-   "volume": 990,
+   "volume": 1010,
    "tiny": false,
-   "delta": 0.0,
+   "delta": 0.02,
    "is_new": false,
    "trend": null
   },
@@ -719,59 +618,37 @@
   },
   {
    "keyword": "청년미래적금",
-   "volume": 385000,
+   "volume": 308500,
    "tiny": false,
-   "delta": -0.326,
+   "delta": -0.199,
    "is_new": false,
    "trend": null
   }
  ],
  "longtail": [
   {
-   "keyword": "연말정산미리보기",
+   "keyword": "원천징수",
    "tails": [
     {
-     "keyword": "연말정산기간",
-     "volume": 12020
+     "keyword": "원천징수영수증",
+     "volume": 34800
     },
     {
-     "keyword": "연말정산소득공제",
-     "volume": 11580
+     "keyword": "원천징수이행상황신고서",
+     "volume": 2940
     },
     {
-     "keyword": "연말정산계산기",
-     "volume": 8280
-    }
-   ],
-   "root": "연말정산"
-  },
-  {
-   "keyword": "종부세",
-   "tails": [
-    {
-     "keyword": "종부세기준",
-     "volume": 6360
-    },
-    {
-     "keyword": "종부세계산기",
-     "volume": 3590
+     "keyword": "원천징수계산기",
+     "volume": 1820
     }
    ]
   },
   {
-   "keyword": "근로장려금",
+   "keyword": "고향사랑기부",
    "tails": [
     {
-     "keyword": "근로장려금대상",
-     "volume": 10120
-    },
-    {
-     "keyword": "근로장려금신청방법",
-     "volume": 2340
-    },
-    {
-     "keyword": "근로장려금조건",
-     "volume": 1940
+     "keyword": "고향사랑기부제",
+     "volume": 198400
     }
    ]
   },
@@ -780,7 +657,7 @@
    "tails": [
     {
      "keyword": "국민연금계산법",
-     "volume": 710
+     "volume": 660
     }
    ]
   },
@@ -789,15 +666,15 @@
    "tails": [
     {
      "keyword": "K패스교통카드",
-     "volume": 57860
+     "volume": 56750
     },
     {
      "keyword": "K패스환급",
-     "volume": 25510
+     "volume": 24390
     },
     {
      "keyword": "K패스등록",
-     "volume": 12900
+     "volume": 12180
     }
    ]
   },
@@ -806,15 +683,15 @@
    "tails": [
     {
      "keyword": "문화누리카드사용처",
-     "volume": 46660
+     "volume": 49270
     },
     {
      "keyword": "문화누리카드온라인",
-     "volume": 8870
+     "volume": 9440
     },
     {
      "keyword": "문화누리카드잔액",
-     "volume": 8010
+     "volume": 8350
     }
    ]
   },
@@ -823,15 +700,15 @@
    "tails": [
     {
      "keyword": "실업급여계산기",
-     "volume": 101200
+     "volume": 101800
     },
     {
      "keyword": "실업급여신청",
-     "volume": 70800
+     "volume": 72600
     },
     {
      "keyword": "실업급여신청방법",
-     "volume": 41400
+     "volume": 41600
     }
    ],
    "root": "실업급여"
@@ -841,33 +718,50 @@
    "tails": [
     {
      "keyword": "부가세신고기간",
-     "volume": 21920
+     "volume": 19730
     },
     {
      "keyword": "부가세예정고지",
-     "volume": 10960
+     "volume": 9540
     },
     {
      "keyword": "부가세납부기간",
-     "volume": 7720
+     "volume": 7320
     }
    ],
    "root": "부가세"
+  },
+  {
+   "keyword": "근로장려금",
+   "tails": [
+    {
+     "keyword": "근로장려금대상",
+     "volume": 10550
+    },
+    {
+     "keyword": "근로장려금신청방법",
+     "volume": 2630
+    },
+    {
+     "keyword": "근로장려금조건",
+     "volume": 1950
+    }
+   ]
   },
   {
    "keyword": "고용보험",
    "tails": [
     {
      "keyword": "고용보험조회",
-     "volume": 29700
+     "volume": 29200
     },
     {
      "keyword": "고용보험실업급여",
-     "volume": 17190
+     "volume": 17480
     },
     {
      "keyword": "고용보험실업급여조건",
-     "volume": 2990
+     "volume": 2960
     }
    ]
   },
@@ -876,15 +770,15 @@
    "tails": [
     {
      "keyword": "에너지바우처대상",
-     "volume": 8160
+     "volume": 8540
     },
     {
      "keyword": "에너지바우처신청",
-     "volume": 7320
+     "volume": 7650
     },
     {
      "keyword": "에너지바우처조회",
-     "volume": 140
+     "volume": 150
     }
    ]
   },
@@ -893,82 +787,64 @@
    "tails": [
     {
      "keyword": "LH임대주택대출",
-     "volume": 390
+     "volume": 410
     },
     {
      "keyword": "LH임대주택보증금대출",
-     "volume": 340
+     "volume": 310
     }
    ]
-  },
-  {
-   "keyword": "주휴수당계산기",
-   "tails": [
-    {
-     "keyword": "주휴수당조건",
-     "volume": 33840
-    },
-    {
-     "keyword": "주휴수당계산법",
-     "volume": 7720
-    },
-    {
-     "keyword": "주휴수당계산방법",
-     "volume": 770
-    }
-   ],
-   "root": "주휴수당"
   }
  ],
  "excluded": [
   {
    "keyword": "꿀알바",
-   "volume": 1149100,
+   "volume": 1203100,
    "reason": "주제 밖"
   },
   {
    "keyword": "부동산",
-   "volume": 673600,
+   "volume": 672800,
    "reason": "주제 밖"
   },
   {
    "keyword": "대출계산기",
-   "volume": 329100,
+   "volume": 323100,
    "reason": "주제 밖"
   },
   {
    "keyword": "퇴직금계산기",
-   "volume": 280200,
+   "volume": 280100,
+   "reason": "주제 밖"
+  },
+  {
+   "keyword": "세무사",
+   "volume": 249400,
    "reason": "주제 밖"
   },
   {
    "keyword": "위하고",
-   "volume": 187200,
+   "volume": 180500,
    "reason": "주제 밖"
   },
   {
    "keyword": "소상공인정책자금",
-   "volume": 185400,
+   "volume": 174100,
    "reason": "주제 밖"
   },
   {
    "keyword": "이자계산기",
-   "volume": 171000,
+   "volume": 168500,
+   "reason": "주제 밖"
+  },
+  {
+   "keyword": "AI",
+   "volume": 157100,
    "reason": "주제 밖"
   },
   {
    "keyword": "시급계산기",
    "volume": 156200,
-   "reason": "주제 밖"
-  },
-  {
-   "keyword": "AI",
-   "volume": 149000,
-   "reason": "주제 밖"
-  },
-  {
-   "keyword": "세무사",
-   "volume": 108700,
    "reason": "주제 밖"
   }
  ]
